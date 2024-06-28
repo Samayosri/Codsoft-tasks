@@ -1,0 +1,106 @@
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class Main {
+
+    public static void main(String[] args) {
+        int numofques = 5;
+        int question = 1;
+        int score = 0;
+
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("TYPE THE CORRECT ANSWER (1/2/3/4) :");
+        while(question<=numofques){ Timer timer1 = new Timer();
+            boolean [] answer={true};
+            timer1.scheduleAtFixedRate(new TimerTask() {
+                private int numofsec = 10;
+
+                public void run() {
+                    numofsec--;
+                    if (numofsec == 0) {
+                        System.out.println("Time's up,press ENTER to continue!");
+                        answer[0]=false;
+                        timer1.cancel();
+
+                    }
+                }
+            }, 0, 1000); // Timer interval set to 10 seconds (10000 milliseconds)
+
+            System.out.println("Question " + question + ": You have 10 seconds to answer.");
+
+            switch (question) {
+                case 1:
+                    System.out.println("What is the answer of (150*2)/5? (60 , 50 , 40 , 10)");
+                    break;
+                case 2:
+                    System.out.println("What is the answer of 130+120+450? (600,550,700,800)");
+                    break;
+                case 3:
+                    System.out.println("What is the answer of 144/12? (14,12,8,13)");
+                    break;
+                case 4:
+                    System.out.println("What is the answer of 4*8*2? (64,32,180,48)");
+                    break;
+                case 5:
+                    System.out.println("What is the answer of 5*4+3? (25,28,30,23)");
+                    break;
+            }
+
+            String ans = scanner.nextLine().trim();
+            long startTime = System.currentTimeMillis();
+            while ((System.currentTimeMillis() - startTime) < 10000 && answer[0]) { timer1.cancel();
+                answer[0] = false;
+
+                switch (question) {
+                    case 1:
+                    case 4:
+                        if (ans.equals("1")) {
+                            score += 2;
+                            System.out.println("CORRECT!");
+                        } else {
+                            System.out.println("WRONG ANSWER!");
+                        }
+                        break;
+                    case 2:
+                        if (ans.equals("3")) {
+                            score += 2;
+                            System.out.println("CORRECT!");
+                        } else {
+                            System.out.println("WRONG ANSWER!");
+                        }
+                        break;
+                    case 3:
+                        if (ans.equals("2")) {
+                            score += 2;
+                            System.out.println("CORRECT!");
+                        } else {
+                            System.out.println("WRONG ANSWER!");
+                        }
+                        break;
+
+                    case 5:
+                        if (ans.equals("4")) {
+                            score += 2;
+                            System.out.println("CORRECT!");
+                        } else {
+                            System.out.println("WRONG ANSWER!");
+                        }
+                        break;
+
+                }
+
+            }
+            question++;
+            System.out.println("Your current score is " + score + " out of " + (question - 1) * 2);
+        }
+        System.out.println("Quiz finished!");
+        System.out.println("Your current score is " + score + " out of " + (question - 1) * 2);
+
+        scanner.close(); // Close the scanner
+
+
+
+
+    }}
