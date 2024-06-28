@@ -1,0 +1,65 @@
+import java.util.Scanner;
+import java.util.Random;
+
+import static java.lang.Math.abs;
+
+public class Main {
+    public static void main(String[] args){
+       Random rand= new Random();
+       boolean check=false;
+       int score =0;int guesses=10;
+        int num=rand.nextInt(100);
+       while (!check ){ System.out.println("you have "+guesses+" guesses FOCUS!");
+           System.out.println("Enter your Guess between 1 to 100");
+       Scanner scanner= new Scanner(System.in);
+       int randomNum=scanner.nextInt();
+       if(randomNum<0||randomNum>100) {System.out.println("Not an Option!"); continue;}
+      guesses--;
+       if(num==randomNum){
+           System.out.println("You guessed correctly!");
+          score ++;
+           System.out.println("YOUR SCORE IS :"+ score);
+
+           System.out.println("Type 1 to continue playing and 0 to stop playing");
+           int play= scanner.nextInt();
+           if(play==0){
+               System.out.println("GAME ENDED");
+           break;}
+           else if(play==1) { num=rand.nextInt(100);guesses=10; continue;}
+            else System.out.println("not an option!");
+
+
+
+       }
+       else{
+            if (abs(num-randomNum)<10){
+               if((num-randomNum)<0)
+               System.out.println("you're so close!!try a lower guess!");
+           else
+           System.out.println("you're so close!!try a higher guess!");}
+           else if ((num-randomNum)<0){ System.out.println("try a lower guess!");}
+           else if ((num-randomNum)>50){ System.out.println("WAY TOO low! try again!");}
+           else if ((num-randomNum)>0){ System.out.println("try a higher guess !");}
+
+
+
+
+
+       }
+           if(guesses==0){
+               System.out.println("You lost!");
+               System.out.println("Type 1 to continue playing and 0 to stop playing");
+               int play= scanner.nextInt();
+               if(play==0){
+                   System.out.println("GAME ENDED");
+                   check=true;}
+               else { num=rand.nextInt(100);
+
+                   guesses=10;
+               }
+           }}
+
+
+    }
+}
+
