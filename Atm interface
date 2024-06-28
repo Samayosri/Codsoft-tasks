@@ -1,0 +1,64 @@
+import java.util.Scanner;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        float balance = 0;
+        String check="true";
+        while (check.equals("true")){
+            System.out.println("TYPE THE Transaction YOU WANT TO Make: (Withdraw-Deposit-Checkbalance)");
+            String choice=  sc.nextLine().toLowerCase();
+            balance=user_account(choice,balance);
+            System.out.println("Do you want to make another transaction? (yes/no)");
+
+           String choice2=sc.nextLine().toLowerCase();
+                if(choice2.equals("no")){System.out.println("THANK YOU");
+                 check="false"; }
+
+        }
+
+
+
+    }
+    public static float user_account (String choice,float balance) {
+        Scanner sc = new Scanner(System.in);
+        int limit=10000;
+        int amount;
+        switch (choice) {
+            case "withdraw":
+                System.out.println("The Maximum amount to withdraw is: " + limit);
+                System.out.println("what is the amount you want to withdraw?");
+
+                amount=sc.nextInt();
+                if(amount>limit) {
+                    System.out.println("The Maximum amount to withdraw is: " + limit);
+                    System.out.println("Your Transaction is Failed");
+
+                }
+                else if (amount>balance) {
+                    System.out.println("Not enough money");
+                    System.out.println("Your Transaction is Failed");
+                }
+
+                else {balance=balance-amount;
+                    System.out.println("Your Transaction is Accepted");
+                }
+
+                break;
+            case "deposit":
+                System.out.println("what is the amount you want to deposit?");
+                amount= sc.nextInt();
+                balance=balance+amount;
+                System.out.println("Your Transaction is Accepted");
+
+                break;
+            case "checkbalance":
+                System.out.println("Your Balance is : "+balance);
+                break;
+           default:
+            System.out.println("Invalid option.");
+            break;
+        } return balance;}}
+
