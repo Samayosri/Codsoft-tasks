@@ -1,0 +1,47 @@
+import java.util.Scanner;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+    public static void main(String[] args) {
+int marks=0;
+int numOfSub;
+System.out.println("ENTER THE NUMBER OF SUBJECTS");
+        Scanner scanner=new Scanner(System.in);
+        numOfSub=scanner.nextInt();
+        int num =numOfSub;
+        while(num!=0){
+            num--;
+            System.out.println("Enter the mark of a subject");
+            marks= marks+ scanner.nextInt();
+        }
+    float percentage = ((float)(marks)/numOfSub);
+        String grade;
+        if(percentage>95){
+            grade="A+";
+        }
+        else if (percentage>=90){
+            grade="A";
+        }
+        else if (percentage>=85){
+            grade="B+";
+        }
+        else if (percentage>=80){
+            grade="B";
+        }
+        else if (percentage>=75){
+            grade="C+";
+        }
+        else if (percentage>=70){
+            grade="C";
+        }
+        else if (percentage>=65){
+            grade="D+";
+
+        }
+        else if (percentage>=60){
+            grade="D";}
+        else grade="F";
+System.out.println("your total marks is "+ marks+"\nYour average percentage is: "+percentage+"\nyour grade is "+grade);
+    }
+}
