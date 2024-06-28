@@ -1,0 +1,259 @@
+import java.io.*;
+import java.util.Scanner;
+import java.util.Vector;
+
+public class Main {
+    public static void main(String[] args) {
+        // Initializing courses
+        String course1name = "DATA SCIENCE";
+        boolean course1available = true;
+        String course2name = "MACHINE LEARNING";
+        boolean course2available = true;
+
+        courses course1 = new courses(course1name,
+                "This course focuses on principles and algorithms for data management and analysis at scale. We'll cover designs of and how to use traditional and modern big data systems, as well as the basics of cloud computing.",
+                "D42", 20, course1available);
+        courses course2 = new courses(course2name,
+                "In this course we study machine representations and algorithms that allow machines to improve their performance on a defined task from experience.",
+                "M42", 10, course2available);
+
+        Scanner sc = new Scanner(System.in);
+
+        // Check if the user has registered before
+        System.out.println("Have you registered before? (yes/no)");
+        String response = sc.nextLine().trim().toLowerCase();
+
+        intern intern1 = null;
+        if (response.equals("yes")) {
+            // Ask for the name and try to load existing intern information
+            System.out.println("Please enter your name:");
+            String studentName = sc.nextLine().trim();
+
+            intern1 = loadInternInfo(studentName);
+            if (intern1 != null) {
+                System.out.println("Loaded intern information: " + intern1);
+                updateCourseCapacityOnLoad(intern1, course1, course2);
+
+                // Ask if they want to add another course
+                System.out.println("Do you want to add another course? (yes/no)");
+                if (sc.nextLine().trim().equalsIgnoreCase("yes")) {
+                    // Display available courses
+                    System.out.println("These are our courses, take a look and decide which ones you want to join:");
+                    System.out.println(course1);
+                    System.out.println(course2);
+
+                    // Get the number of additional courses
+                    System.out.println("How many courses do you want to join?");
+                    int numberOfCourses = sc.nextInt();
+                    sc.nextLine(); // Consume newline left-over
+
+                    // Get the course names
+                    System.out.println("What are the names of the courses you want to join?");
+                    for (int i = 0; i < numberOfCourses; i++) {
+                        String courseName = sc.nextLine().toUpperCase();
+                        if (courseName.equals(course1name) && course1.isAvailable() && !intern1.getInternships().contains(course1name)) {
+                            intern1.getInternships().add(course1name);
+                            course1.reduceCapacity();
+                        } else if (courseName.equals(course2name) && course2.isAvailable() && !intern1.getInternships().contains(course2name)) {
+                            intern1.getInternships().add(course2name);
+                            course2.reduceCapacity();
+                        } else {
+                            System.out.println(courseName + " is not available or you are already enrolled in it!");
+                        }
+                    }
+                }
+            } else {
+                System.out.println("No saved intern information found for " + studentName + ". Proceeding to registration.");
+            }
+        }
+
+        if (intern1 == null) {
+            // Welcome message
+            System.out.println("\t\tWelcome to our courses page");
+            System.out.println("Sign in to continue!\nWhat is your name?");
+
+            String studentName = sc.nextLine();
+
+            // Display available courses
+            System.out.println("These are our courses, take a look and decide which ones you want to join:");
+            System.out.println(course1);
+            System.out.println(course2);
+
+            // Get student ID
+            System.out.println("What is your ID?");
+            int studentId = sc.nextInt();
+            sc.nextLine(); // Consume newline left-over
+
+            // Get the number of courses
+            System.out.println("How many courses do you want to join?");
+            int numberOfCourses = sc.nextInt();
+            sc.nextLine(); // Consume newline left-over
+
+            // Get the course names
+            Vector<String> coursesName = new Vector<>();
+            System.out.println("What are the names of the courses you want to join?");
+            for (int i = 0; i < numberOfCourses; i++) {
+                String courseName = sc.nextLine().toUpperCase();
+                if (courseName.equals(course1name) && course1.isAvailable()) {
+                    coursesName.add(course1name);
+                    course1.reduceCapacity();
+                } else if (courseName.equals(course2name) && course2.isAvailable()) {
+                    coursesName.add(course2name);
+                    course2.reduceCapacity();
+                } else {
+                    System.out.println(courseName + " is not available!");
+                }
+            }
+
+            // Register the intern
+            intern1 = new intern(studentName, studentId, coursesName);
+
+            // Save the intern information to a file
+            saveInternInfo(intern1);
+
+            // Display intern information
+            System.out.println("Intern registered: " + intern1);
+        }
+
+        // Removing courses
+        boolean end = false;
+        while (!end) {
+            System.out.println("Do you want to remove any course? (yes/no)");
+            if (sc.nextLine().equalsIgnoreCase("yes")) {
+                System.out.println("Which course do you want to remove?");
+                String courseToRemove = sc.nextLine().toUpperCase();
+                if (intern1.getInternships().contains(courseToRemove)) {
+                    intern1.getInternships().remove(courseToRemove);
+                    System.out.println(courseToRemove + " has been removed.");
+                    if (courseToRemove.equals(course1name)) {
+                        course1.increaseCapacity();
+                    } else if (courseToRemove.equals(course2name)) {
+                        course2.increaseCapacity();
+                    }
+                } else {
+                    System.out.println(courseToRemove + " is not in your list of courses.");
+                }
+            } else {
+                end = true;
+            }
+        }
+        saveInternInfo(intern1);
+        System.out.println("THANK YOU FOR REGISTRATION!");
+        System.out.println("Intern registered: " + intern1);
+
+        sc.close();
+    }
+
+    public static void saveInternInfo(intern intern1) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("intern_" + intern1.getInternName() + ".txt"))) {
+            writer.write(intern1.getInternName() + "\n");
+            writer.write(intern1.getID() + "\n");
+            for (String course : intern1.getInternships()) {
+                writer.write(course + "\n");
+            }
+            System.out.println("Intern information saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving intern information: " + e.getMessage());
+        }
+    }
+
+    public static intern loadInternInfo(String internName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("intern_" + internName + ".txt"))) {
+            String name = reader.readLine();
+            int ID = Integer.parseInt(reader.readLine());
+            Vector<String> internships = new Vector<>();
+            String course;
+            while ((course = reader.readLine()) != null) {
+                internships.add(course);
+            }
+            return new intern(name, ID, internships);
+        } catch (IOException e) {
+            System.out.println("Error loading intern information: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static void updateCourseCapacityOnLoad(intern loadedIntern, courses course1, courses course2) {
+        for (String courseName : loadedIntern.getInternships()) {
+            if (courseName.equals(course1.getName())) {
+                course1.reduceCapacity();
+            } else if (courseName.equals(course2.getName())) {
+                course2.reduceCapacity();
+            }
+        }
+    }
+}
+
+class courses {
+    private String name;
+    private String description;
+    private String code;
+    private int capacity;
+    private boolean availability;
+
+    public courses(String name, String description, String code, int capacity, boolean availability) {
+        this.name = name;
+        this.description = description;
+        this.code = code;
+        this.capacity = capacity;
+        this.availability = availability;
+    }
+
+    public void reduceCapacity() {
+        if (capacity > 0) {
+            capacity--;
+            if (capacity == 0) {
+                availability = false;
+            }
+        }
+    }
+
+    public void increaseCapacity() {
+        capacity++;
+        if (capacity > 0) {
+            availability = true;
+        }
+    }
+
+    public boolean isAvailable() {
+        return availability;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Course: " + name + "\nDescription: " + description + "\nCode: " + code + "\nCapacity: " + capacity + "\nAvailable: " + availability;
+    }
+}
+
+class intern {
+    private int ID;
+    private String internName;
+    private Vector<String> internships;
+
+    public intern(String internName, int ID, Vector<String> internshipsName) {
+        this.ID = ID;
+        this.internName = internName;
+        this.internships = new Vector<>(internshipsName);
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public String getInternName() {
+        return internName;
+    }
+
+    public Vector<String> getInternships() {
+        return internships;
+    }
+
+    @Override
+    public String toString() {
+        return "Intern Name: " + internName + "\nID: " + ID + "\nCourses: " + internships;
+    }
+}
